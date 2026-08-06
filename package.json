@@ -1,0 +1,26 @@
+{
+  "name": "practica-tasks-ibars-eluney",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000p\u0000r\u0000a\u0000c\u0000t\u0000i\u0000c\u0000a\u0000-\u0000t\u0000a\u0000s\u0000k\u0000s\u0000-\u0000i\u0000b\u0000a\u0000r\u0000s\u0000-\u0000e\u0000l\u0000u\u0000n\u0000e\u0000y\u0000\r\u0000 \u0000",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eluney8/practica-tasks-ibars-eluney.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/eluney8/practica-tasks-ibars-eluney/issues"
+  },
+  "homepage": "https://github.com/eluney8/practica-tasks-ibars-eluney#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "mysql2": "^3.23.2",
+    "sequelize": "^6.37.8"
+  }
+}
