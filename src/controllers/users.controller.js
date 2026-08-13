@@ -5,7 +5,6 @@ export const crearUser = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
-        console.log(name);
         if (!name || !email || !password ) {
             return res.status(400).json({message:"los campos no pueden estar vacios"});
         };
@@ -34,4 +33,16 @@ export const crearUser = async (req, res) => {
         console.log(error);
         return res.status(500).json({message:"error interno del servidor"})
     }
+};
+
+// traer los usuarios
+export const obtenerUser = async (req, res) => {
+  try {
+    const user = await UsersModel.findAll();
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error interno del servidor" });
+  }
 };
