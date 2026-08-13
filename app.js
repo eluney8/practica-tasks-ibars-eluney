@@ -1,20 +1,19 @@
 import express from 'express';
 import { bdLista } from "./src/config/database.js"
+import { usersRoutes } from './src/routes/users.routes.js';
+import { UsersModel } from './src/models/user.model.js';
 const app = express();
 
 app.use(express.json());
 
 bdLista();
+app.use("/api", usersRoutes);
 
 app.get("/", (req, res) =>{
     res.send("servidor express funcionando")
-})
+});
 
-app.use("/", (req, res) => {
-return res.json({ message: "servidor todo listo" });
- });
-
-const PORT = 3000;
+const PORT = 3001;
 app.listen(PORT, () =>{
     console.log(`servidor corriendo en el puerto ${PORT}`)
-})
+});

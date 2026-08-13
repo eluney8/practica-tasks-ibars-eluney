@@ -8,6 +8,7 @@ export const sequelize = new Sequelize ("tasks_users_db", "root","",{
 export const bdLista = async () => {
     try {
         await sequelize.authenticate();
+        await sequelize.sync();
         console.log("Coneccion a la bd correcta");
     } catch (error) {
     console.log("error al conectarse a la bd", error);
