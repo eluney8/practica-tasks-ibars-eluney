@@ -76,3 +76,33 @@ export const obtenerUserPorId = async (req, res) => {
     });
   }
 };
+// editar personaje por id
+export const editarUser = async (req, res) => {
+  try {
+    const idUser = Number(req.params.id);
+    const { name, email, password } = req.body;
+    // buscamos por id
+    const user = await UsersModel.findByPk(idUser);
+    if (!user) {
+      return res.status(404).json({
+        message: "usuario no encontrado",
+      });
+    }
+    await user.update({
+      name,    
+      email,
+      password
+      
+    });
+    return res.status(200).json({
+      message: "user editado correctamente",
+      user
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "error interno del servidor"
+    });
+  }
+};
