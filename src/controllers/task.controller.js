@@ -131,3 +131,25 @@ export const editarTarea = async (req, res) => {
     return res.status(500).json({ message: "error interno del servidor" });
   }
 };
+
+export const eliminarTask = async (req, res) => {
+  try {
+    const idTask = Number(req.params.id);
+
+    const task = await TaskModel.findByPk(idTask);
+    if (!task) {
+      return res.status(404).json({
+        message: "tarea no encontrado",
+      });
+    }
+    await task.destroy();
+    return res.status(200).json({
+      message: "tarea eliminado",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "error interno del servidor",
+    });
+  }
+};
