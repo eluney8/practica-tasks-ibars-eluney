@@ -56,3 +56,25 @@ export const obtenerTareas = async (req, res) => {
     res.status(500).json({ message: "Error interno del servidor" });
   }
 };
+
+export const obtenerTaskPorId = async (req, res) => {
+  try {
+    const taskId = Number(req.params.id);
+    // Buscamos en la base
+    const taskEncontrado = await TaskModel.findByPk(taskId);
+    if (!taskEncontrado) {
+      return res.status(404).json({
+        message: `tarea con el id #${taskId} no encontrada`,
+      });
+    }
+    return res.json({
+      message: "tarea encontrada",
+      taskEncontrado,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Error interno del servidor",
+    });
+  }
+};

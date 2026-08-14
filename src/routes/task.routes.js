@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { añadirTarea, obtenerTareas } from "../controllers/task.controller.js";
+import { añadirTarea, obtenerTareas, obtenerTaskPorId } from "../controllers/task.controller.js";
 
 export const taskRoutes = Router();
 
 taskRoutes.post("/task", añadirTarea);
 taskRoutes.get("/task", obtenerTareas );
-// taskRoutes.get("/task/:id",obtenerUserPorId);
+taskRoutes.get("/task/:id",obtenerTaskPorId);
 // taskRoutes.put("/task/:id",editarUser);
 // taskRoutes.delete("/task/:id",eliminarUser);
