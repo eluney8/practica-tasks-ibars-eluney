@@ -89,20 +89,41 @@ export const editarUser = async (req, res) => {
       });
     }
     await user.update({
-      name,    
+      name,
       email,
-      password
-      
+      password,
     });
     return res.status(200).json({
       message: "user editado correctamente",
-      user
+      user,
     });
-
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      message: "error interno del servidor"
+      message: "error interno del servidor",
+    });
+  }
+};
+
+// eliminar un usuario por su id
+export const eliminarUser = async (req, res) => {
+  try {
+    const idUsuario = Number(req.params.id);
+
+    const usuario = await UsersModel.findByPk(idUsuario);
+    if (!usuario) {
+      return res.status(404).json({
+        message: "usuario no encontrado",
+      });
+    }
+    await usuario.destroy();
+    return res.status(200).json({
+      message: "usuario eliminado",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Error interno del servidor",
     });
   }
 };
