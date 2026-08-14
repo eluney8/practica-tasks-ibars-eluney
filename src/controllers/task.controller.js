@@ -1,4 +1,5 @@
 import { TaskModel } from "../models/task.model.js";
+import { taskRoutes } from "../routes/task.routes.js";
 
 export const añadirTarea = async (req, res) => {
   try {
@@ -42,5 +43,16 @@ export const añadirTarea = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "error interno del servidor" });
+  }
+};
+
+export const obtenerTareas = async (req, res) => {
+  try {
+    const task = await TaskModel.findAll();
+
+    return res.status(200).json(task);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error interno del servidor" });
   }
 };
