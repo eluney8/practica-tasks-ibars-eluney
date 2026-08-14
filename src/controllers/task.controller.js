@@ -18,11 +18,9 @@ export const añadirTarea = async (req, res) => {
     }
 
     if (description.length > 100) {
-      return res
-        .status(400)
-        .json({
-          message: "la descripcion no puede superar los 100 caracteres",
-        });
+      return res.status(400).json({
+        message: "la descripcion no puede superar los 100 caracteres",
+      });
     }
     const titleExistente = await TaskModel.findOne({ where: { title } });
     if (titleExistente) {
@@ -76,5 +74,60 @@ export const obtenerTaskPorId = async (req, res) => {
     return res.status(500).json({
       message: "Error interno del servidor",
     });
+  }
+};
+
+export const editarTarea = async (req, res) => {
+  try {
+    const idTarea = Number(req.params.id);
+    const { title, description, isComplete } = req.body;
+    const tarea = await TaskModel.findByPk(idTarea);
+    if (!tarea) {
+      return res.status(404).json({ message: "tarea no encontrada" });
+    }
+
+    if (title !== undefined) {
+      if (!title.trim()) {
+        return res
+          .status(400)
+          .json({ message: "el titulo no puede estar vacio" });
+      }
+      if (title.length > 100) {
+        return res
+          .status(400)
+          .json({ message: "el titulo no puede superar los 100 caracteres" });
+      }
+    }
+    if (description !== undefined) {
+      if (!description.trim()) {
+        return res
+          .status(400)
+          .json({ message: "la descripcion no puede estar vacia" });
+      }
+      if (description.length > 100) {
+        return res
+          .status(400)
+          .json({
+            message: "la descripcion no puede superar los 100 caracteres",
+          });
+      }
+    }
+    if (isComplete !== undefined && typeof isComplete !== "boolean") {
+      return res.status(400).json({
+        message: "isComplete debe ser un valor booleano",
+      });
+    }
+    await tarea.update({
+      title,
+      description,
+      isComplete,
+    });
+    return res.status(200).json({
+      message: "tarea actualizada",
+      task: tarea,
+    });
+  } catch (error) {
+    console.error("error al actualizar la tarea:");
+    return res.status(500).json({ message: "error interno del servidor" });
   }
 };
