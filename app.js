@@ -2,12 +2,14 @@ import express from 'express';
 import { bdLista } from "./src/config/database.js"
 import { usersRoutes } from './src/routes/users.routes.js';
 import { UsersModel } from './src/models/user.model.js';
+import { taskRoutes } from './src/routes/task.routes.js';
 const app = express();
 
 app.use(express.json());
 
 bdLista();
-app.use("/api", usersRoutes);
+app.use("/api", usersRoutes, taskRoutes);
+app.use("/api",taskRoutes);
 
 app.get("/", (req, res) =>{
     res.send("servidor express funcionando")
