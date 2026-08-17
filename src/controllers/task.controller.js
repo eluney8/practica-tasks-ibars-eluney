@@ -4,10 +4,10 @@ import { UsersModel } from "../models/user.model.js";
 
 export const añadirTarea = async (req, res) => {
   try {
-    const { title, description, isComplete, user_id} = req.body;
-    console.log(title);
+    const { title, description, is_completed, user_id} = req.body;
+    console.log(req.body);
 
-    if (!title || !description, !user_id) {
+    if (!title || !description || !user_id) {
       return res
         .status(400)
         .json({ message: "los campos no pueden estar vacios" });
@@ -28,9 +28,9 @@ export const añadirTarea = async (req, res) => {
       return res.status(400).json({ message: "la tarea debe de ser unica" });
     };
 
-    if (isComplete !== undefined && typeof isComplete !== "boolean") {
+    if (is_completed !== undefined && typeof is_completed !== "boolean") {
       return res.status(400).json({
-        message: "isComplete debe ser un valor booleano",
+        message: "is_Complete debe ser un valor booleano",
       });
     };
     const usuarioExiste = await UsersModel.findByPk(user_id);
@@ -79,7 +79,7 @@ export const obtenerTareas = async (req, res) => {
 export const obtenerTaskPorId = async (req, res) => {
   try {
     const taskId = Number(req.params.id);
-    // Buscamos en la base
+    // Buscamos en la bd
     const taskEncontrado = await TaskModel.findByPk(taskId);
     if (!taskEncontrado) {
       return res.status(404).json({
@@ -101,7 +101,7 @@ export const obtenerTaskPorId = async (req, res) => {
 export const editarTarea = async (req, res) => {
   try {
     const idTarea = Number(req.params.id);
-    const { title, description, isComplete } = req.body;
+    const { title, description, is_completed } = req.body;
     const tarea = await TaskModel.findByPk(idTarea);
     if (!tarea) {
       return res.status(404).json({ message: "tarea no encontrada" });
@@ -133,15 +133,15 @@ export const editarTarea = async (req, res) => {
           });
       }
     }
-    if (isComplete !== undefined && typeof isComplete !== "boolean") {
+    if (is_completed !== undefined && typeof is_completed !== "boolean") {
       return res.status(400).json({
-        message: "isComplete debe ser un valor booleano",
+        message: "is_Complete debe ser un valor booleano",
       });
     }
     await tarea.update({
       title,
       description,
-      isComplete,
+      is_completed,
     });
     return res.status(200).json({
       message: "tarea actualizada",
