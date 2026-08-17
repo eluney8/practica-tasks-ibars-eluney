@@ -1,5 +1,5 @@
 import { UsersModel } from "../models/user.model.js";
-
+import { TaskModel } from "../models/task.model.js"; 
 // crear usuario
 export const crearUser = async (req, res) => {
   try {
@@ -45,7 +45,17 @@ export const crearUser = async (req, res) => {
 // traer los usuarios
 export const obtenerUser = async (req, res) => {
   try {
-    const user = await UsersModel.findAll();
+    const user = await UsersModel.findAll({
+      attributes:{
+        exclude:["password"]
+      },
+      include:[
+        {
+          model:TaskModel,
+          as: "tareas"
+        }
+      ]
+    });
 
     return res.status(200).json(user);
   } catch (error) {
@@ -59,7 +69,17 @@ export const obtenerUserPorId = async (req, res) => {
   try {
     const userId = Number(req.params.id);
     // Buscamos en la base
-    const userEncontrado = await UsersModel.findByPk(userId);
+    const userEncontrado = await UsersModel.findByPk(userId,{
+      attributes:{
+        exclude:["password"]
+      },
+      include: [
+        {
+          model:TaskModel,
+          as:"tareas"
+        }
+      ]
+    });
     if (!userEncontrado) {
       return res.status(404).json({
         message: `user con el id #${userId} no encontrado`,
