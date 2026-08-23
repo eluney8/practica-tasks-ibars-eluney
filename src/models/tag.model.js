@@ -4,7 +4,7 @@ import { sequelize } from "../config/database.js";
 export const TagModel = sequelize.define(
   "Tag",
   {
-    id: {
+    tag_id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
