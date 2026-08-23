@@ -1,0 +1,15 @@
+import { body,param } from "express-validator";
+import { TagModel } from "../../models/tag.model.js";
+
+export const createTagValidation = [
+  body("name")
+    .notEmpty().withMessage("el nombre de la etiqueta es obligatorio")
+    .isLength({ max: 100 }).withMessage("el nombre de la etiqueta no puede superar los 100 caracteres")
+    .custom(async (value) => {
+      const etiquetaExiste = await TagModel.findOne({ where: { name: value } });
+      if (etiquetaExiste) {
+        throw new Error("ya existe una etiqueta con ese nombre");
+      }
+      return true;
+    }),
+];
