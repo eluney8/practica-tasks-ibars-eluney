@@ -72,3 +72,16 @@ export const editarUserValidation = [
     .isLength({ max: 100 })
     .withMessage("la contraseña no pued esuperar ñps 100 caracteres"),
 ];
+
+export const userIdValidation = [
+  param("id")
+  .isInt({min: 1})
+  .withMessage("el id debe ser un numero entero y positivo")
+  .custom(async(value) =>{
+    const usuarioExiste = await UsersModel.findByPk(value);
+    if (!usuarioExiste) {
+      throw new Error ("el usuario con ese id no existe")
+    }
+    return true;
+  })
+]
