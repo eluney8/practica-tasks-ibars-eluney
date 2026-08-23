@@ -1,5 +1,6 @@
 import { UsersModel } from "../models/user.model.js";
 import { TaskModel } from "../models/task.model.js"; 
+import { param } from "express-validator";
 // crear usuario
 export const crearUser = async (req, res) => {
   try {
@@ -147,3 +148,16 @@ export const eliminarUser = async (req, res) => {
     });
   }
 };
+
+const userIdValidation = [
+  param("id")
+  .isInt({min: 1})
+  .withMessage("el id debe ser un numero entero y positivo")
+  .custom(async(value) =>{
+    const usuarioExiste = await UsersModel.findByPk(value);
+    if (!usuarioExiste) {
+      throw new Error ("el usuario con ese id no existe")
+    }
+    return true;
+  })
+]
