@@ -1,5 +1,5 @@
 import { body, param } from "express-validator";
-import { UsersModel } from "../../models/user.model";
+import { UsersModel } from "../../models/user.model.js";
 
 export const createUserValidation = [
   body("name")
