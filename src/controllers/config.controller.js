@@ -1,34 +1,28 @@
 import { ConfigModel } from "../models/config.model.js";
 import { UsersModel } from "../models/user.model.js";
+import { matchedData } from "express-validator";
 
 export const crearConfig = async (req, res) => {
   try {
-    const { theme_color, language, user_id } = req.body;
-    if (!user_id || !language || !theme_color) {
-      return res.status(400).json({
-        message: "los campos son obligatorio para la configuracion",
-      });
-    }
-    const usuarioExiste = await UsersModel.findByPk(user_id);
+    const validatedData = matchedData(req);
+    const usuarioExiste = await UsersModel.findByPk(validatedData.user_id);
     if (!usuarioExiste) {
       return res.status(404).json({
-        message: "el usuario asignado no existe",
+        message: "el usuario asignado no existe en el sistema"
       });
     }
-    const configExistente = await ConfigModel.findOne({ where: { user_id } });
+    const configExistente = await ConfigModel.findOne({
+      where: { user_id: validatedData.user_id }
+    });
     if (configExistente) {
       return res.status(400).json({
-        message: "este usuario ya tiene una configuración registrada",
+        message: "este usuario ya tiene una configuracion asignada"
       });
     }
-    const nuevaConfig = await ConfigModel.create({
-      theme_color,
-      language,
-      user_id,
-    });
+    const nuevaConfig = await ConfigModel.create(validatedData);
     return res.status(201).json({
-      message: "configuración guardada",
-      nuevaConfig,
+      message: "configuración creada correctamente",
+      config: nuevaConfig
     });
   } catch (error) {
     console.error("error en crear la config", error);

@@ -8,9 +8,9 @@ export const TaskTagModel = sequelize.define(
   {
     id: {
       type: DataTypes.INTEGER,
-      primaryKey: true,
       allowNull: false,
-      autoIncrement: true,
+      primaryKey: true,
+      autoIncrement: true
     },
   },
   {

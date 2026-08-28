@@ -7,6 +7,6 @@ export const usersRoutes = Router();
 
 usersRoutes.post("/users",createUserValidation, validate, crearUser);
 usersRoutes.get("/users", obtenerUser );
-usersRoutes.get("/users/:id", editarUserValidation, validate, obtenerUserPorId);
-usersRoutes.put("/users/:id",userIdValidation, validate, editarUser);
-usersRoutes.delete("/users/:id",userIdValidation,validate,eliminarUser);
+usersRoutes.get("/users/:id" ,userIdValidation,validate,obtenerUserPorId);
+usersRoutes.put("/users/:id",editarUserValidation, validate, editarUser);
+usersRoutes.delete("/users/:id", userIdValidation, validate ,eliminarUser);

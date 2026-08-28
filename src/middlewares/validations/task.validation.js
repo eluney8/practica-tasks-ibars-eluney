@@ -4,6 +4,7 @@ import { UsersModel } from "../../models/user.model.js";
 
 export const createTaskValidation = [
   body("title")
+  .trim()
     .notEmpty()
     .withMessage("el titulo de la tarea es obligatorio")
     .isLength({ max: 100 })
@@ -17,41 +18,27 @@ export const createTaskValidation = [
     }),
 
   body("description")
+    .trim()
     .notEmpty()
     .withMessage("la descripcion de la tarea es obligatoria")
     .isLength({ max: 100 })
     .withMessage("la descripcion no puede superar los 100 caracteres"),
 
-  body(is_completed)
+  body("is_completed")
     .optional()
     .isBoolean()
     .withMessage("is completed debe de ser un valor booleano"),
 
   body("user_id")
-    .notEmpty()
-    .withMessage("el user_id es obligatorio para asociar la tarea")
     .isInt({ min: 1 })
     .withMessage("el user_id debe ser un numero entero y positivo")
-    .custom(async (value) => {
-      const usuarioExiste = await UsersModel.findByPk(value);
-      if (!usuarioExiste) {
-        throw new Error("ese usuario no existe en el sistema");
-      }
-      return true;
-    }),
+,
 ];
 
 export const taskIdValidation = [
   param("id")
     .isInt({ min: 1 })
     .withMessage("el id de la tarea debe ser un numero entero y positivo")
-    .custom(async (value) => {
-      const tareaExiste = await TaskModel.findByPk(value);
-      if (!tareaExiste) {
-        throw new Error("la tarea con ese id no existe");
-      }
-      return true;
-    }),
 ];
 
 export const editarTaskValidation = [
@@ -59,6 +46,7 @@ export const editarTaskValidation = [
   ...taskIdValidation,
 
   body("title")
+  .trim()
     .optional()
     .notEmpty()
     .withMessage("el titulo no puede estar vacio")
@@ -72,12 +60,13 @@ export const editarTaskValidation = [
       return true;
     }),
   body("description")
+    .trim()
     .optional()
     .notEmpty()
     .withMessage("la descripcion no puede estar vacia")
     .isLength({ max: 100 })
     .withMessage("la descripcion no puede superar los 100 caracteres"),
-  body("isComplete")
+  body("is_completed")
     .optional()
     .isBoolean()
     .withMessage("el estado is Completed debe ser un valor booleano"),

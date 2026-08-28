@@ -4,10 +4,11 @@ import { sequelize } from "../config/database.js";
 export const TagModel = sequelize.define(
   "Tag",
   {
-    tag_id: {
+    id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
+      allowNull: false,
     },
     name: {
       type: DataTypes.STRING(50),

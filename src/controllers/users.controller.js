@@ -1,12 +1,19 @@
 import { UsersModel } from "../models/user.model.js";
-import { TaskModel } from "../models/task.model.js"; 
-import { param } from "express-validator";
+import { TaskModel } from "../models/task.model.js";
+import { matchedData } from "express-validator";
+
 // crear usuario
 export const crearUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-
-    if (!name || !email || !password) {
+    if (
+      !name ||
+      !name.trim() ||
+      !email.trim() ||
+      !password.trim() ||
+      !email ||
+      !password
+    ) {
       return res
         .status(400)
         .json({ message: "los campos no pueden estar vacios" });
@@ -16,7 +23,6 @@ export const crearUser = async (req, res) => {
         .status(400)
         .json({ message: "el nombre no puede superar los 100 caracteres" });
     }
-
     if (email.length > 100) {
       return res
         .status(400)
@@ -31,7 +37,6 @@ export const crearUser = async (req, res) => {
     if (emailExistente) {
       return res.status(400).json({ message: "el gmail debe de ser unico" });
     }
-
     const user = await UsersModel.create(req.body);
     return res.status(201).json({
       message: "usuario creado con exito",
@@ -47,17 +52,16 @@ export const crearUser = async (req, res) => {
 export const obtenerUser = async (req, res) => {
   try {
     const user = await UsersModel.findAll({
-      attributes:{
-        exclude:["password"]
+      attributes: {
+        exclude: ["password"],
       },
-      include:[
+      include: [
         {
-          model:TaskModel,
-          as: "tareas"
-        }
-      ]
+          model: TaskModel,
+          as: "tareas",
+        },
+      ],
     });
-
     return res.status(200).json(user);
   } catch (error) {
     console.log(error);
@@ -68,28 +72,22 @@ export const obtenerUser = async (req, res) => {
 // obtener un usuario por su id
 export const obtenerUserPorId = async (req, res) => {
   try {
-    const userId = Number(req.params.id);
-    // Buscamos en la base
-    const userEncontrado = await UsersModel.findByPk(userId,{
-      attributes:{
-        exclude:["password"]
-      },
+    const { id } = matchedData(req, { locations: ["params"] });
+    const usuario = await UsersModel.findByPk(id, {
       include: [
         {
-          model:TaskModel,
-          as:"tareas"
-        }
-      ]
+          model: TaskModel,
+          as: "tareas",
+          attributes: ["id", "title", "description", "is_completed"],
+        },
+      ],
     });
-    if (!userEncontrado) {
+    if (!usuario) {
       return res.status(404).json({
-        message: `user con el id #${userId} no encontrado`,
+        message: "usuario no encontrado",
       });
     }
-    return res.json({
-      message: "User encontrado",
-      userEncontrado,
-    });
+    return res.status(200).json(usuario);
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -97,23 +95,18 @@ export const obtenerUserPorId = async (req, res) => {
     });
   }
 };
-// editar personaje por id
+// editar user por id
 export const editarUser = async (req, res) => {
   try {
-    const idUser = Number(req.params.id);
-    const { name, email, password } = req.body;
-    // buscamos por id
-    const user = await UsersModel.findByPk(idUser);
+    const validatedDataBody = matchedData(req, { locations: ["body"] });
+    const { id } = matchedData(req, { locations: ["params"] });
+    const user = await UsersModel.findByPk(id);
     if (!user) {
       return res.status(404).json({
         message: "usuario no encontrado",
       });
     }
-    await user.update({
-      name,
-      email,
-      password,
-    });
+    await user.update(validatedDataBody);
     return res.status(200).json({
       message: "user editado correctamente",
       user,
@@ -129,17 +122,16 @@ export const editarUser = async (req, res) => {
 // eliminar un usuario por su id
 export const eliminarUser = async (req, res) => {
   try {
-    const idUsuario = Number(req.params.id);
-
-    const usuario = await UsersModel.findByPk(idUsuario);
-    if (!usuario) {
+    const { id } = matchedData(req, { locations: ["params"] });
+    const user = await UsersModel.findByPk(id);
+    if (!user) {
       return res.status(404).json({
         message: "usuario no encontrado",
       });
     }
-    await usuario.destroy();
+    await user.destroy();
     return res.status(200).json({
-      message: "usuario eliminado",
+      message: "usuario eliminado correctamente",
     });
   } catch (error) {
     console.error(error);

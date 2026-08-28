@@ -1,50 +1,21 @@
 import { TaskModel } from "../models/task.model.js";
 import { taskRoutes } from "../routes/task.routes.js";
 import { UsersModel } from "../models/user.model.js";
+import { matchedData } from "express-validator";
 
 export const añadirTarea = async (req, res) => {
   try {
-    const { title, description, is_completed, user_id} = req.body;
-    console.log(req.body);
-
-    if (!title || !description || !user_id) {
-      return res
-        .status(400)
-        .json({ message: "los campos no pueden estar vacios" });
-    };
-    if (title.length > 100) {
-      return res
-        .status(400)
-        .json({ message: "el titulo no puede superar los 100 caracteres" });
-    };
-
-    if (description.length > 100) {
-      return res.status(400).json({
-        message: "la descripcion no puede superar los 100 caracteres",
-      });
-    };
-    const titleExistente = await TaskModel.findOne({ where: { title } });
-    if (titleExistente) {
-      return res.status(400).json({ message: "la tarea debe de ser unica" });
-    };
-
-    if (is_completed !== undefined && typeof is_completed !== "boolean") {
-      return res.status(400).json({
-        message: "is_Complete debe ser un valor booleano",
-      });
-    };
-    const usuarioExiste = await UsersModel.findByPk(user_id);
+    const validatedData = matchedData(req);
+    const usuarioExiste = await UsersModel.findByPk(validatedData.user_id);
     if (!usuarioExiste) {
       return res.status(404).json({
-        message:"el usuario asignado no existe"
-      })
-    };
-
-
-    const task = await TaskModel.create(req.body);
+        message: "El usuario asignado no existe en el sistema",
+      });
+    }
+    const nuevaTarea = await TaskModel.create(validatedData);
     return res.status(201).json({
-      message: "tarea creada con exito",
-      task,
+      message: "Tarea creada con éxito",
+      task: nuevaTarea,
     });
   } catch (error) {
     console.log(error);
@@ -56,17 +27,17 @@ export const obtenerTareas = async (req, res) => {
   try {
     const task = await TaskModel.findAll({
       attributes: {
-        exclude: ["user_id"]
+        exclude: ["user_id"],
       },
       include: [
         {
-          model:UsersModel,
-          as:"autor",
-          attributes:{
-            exclude:["password"]
-          }
-        }
-      ]
+          model: UsersModel,
+          as: "autor",
+          attributes: {
+            exclude: ["password"],
+          },
+        },
+      ],
     });
 
     return res.status(200).json(task);
@@ -78,17 +49,18 @@ export const obtenerTareas = async (req, res) => {
 
 export const obtenerTaskPorId = async (req, res) => {
   try {
-    const taskId = Number(req.params.id);
-    // Buscamos en la bd
-    const taskEncontrado = await TaskModel.findByPk(taskId);
-    if (!taskEncontrado) {
+    const validatedDataBody = matchedData(req, { locations: ["body"] });
+    const { id } = matchedData(req, { locations: ["params"] });
+    const tarea = await TaskModel.findByPk(id);
+    if (!tarea) {
       return res.status(404).json({
-        message: `tarea con el id #${taskId} no encontrada`,
+        message: "Tarea no encontrada",
       });
     }
-    return res.json({
-      message: "tarea encontrada",
-      taskEncontrado,
+    await tarea.update(validatedDataBody);
+    return res.status(200).json({
+      message: "Tarea editada correctamente",
+      task: tarea,
     });
   } catch (error) {
     console.error(error);
@@ -100,52 +72,18 @@ export const obtenerTaskPorId = async (req, res) => {
 
 export const editarTarea = async (req, res) => {
   try {
-    const idTarea = Number(req.params.id);
-    const { title, description, is_completed } = req.body;
-    const tarea = await TaskModel.findByPk(idTarea);
-    if (!tarea) {
-      return res.status(404).json({ message: "tarea no encontrada" });
-    }
-
-    if (title !== undefined) {
-      if (!title.trim()) {
-        return res
-          .status(400)
-          .json({ message: "el titulo no puede estar vacio" });
-      }
-      if (title.length > 100) {
-        return res
-          .status(400)
-          .json({ message: "el titulo no puede superar los 100 caracteres" });
-      }
-    }
-    if (description !== undefined) {
-      if (!description.trim()) {
-        return res
-          .status(400)
-          .json({ message: "la descripcion no puede estar vacia" });
-      }
-      if (description.length > 100) {
-        return res
-          .status(400)
-          .json({
-            message: "la descripcion no puede superar los 100 caracteres",
-          });
-      }
-    }
-    if (is_completed !== undefined && typeof is_completed !== "boolean") {
-      return res.status(400).json({
-        message: "is_Complete debe ser un valor booleano",
+    const validatedDataBody = matchedData(req, { locations: ["body"] });
+    const { id } = matchedData(req, { locations: ["params"] });
+    const task = await TaskModel.findByPk(id);
+    if (!task) {
+      return res.status(404).json({
+        message: "Tarea no encontrada",
       });
     }
-    await tarea.update({
-      title,
-      description,
-      is_completed,
-    });
+    await task.update(validatedDataBody);
     return res.status(200).json({
-      message: "tarea actualizada",
-      task: tarea,
+      message: "Tarea editada correctamente",
+      task,
     });
   } catch (error) {
     console.error("error al actualizar la tarea:");

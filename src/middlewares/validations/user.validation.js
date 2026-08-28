@@ -3,14 +3,18 @@ import { UsersModel } from "../../models/user.model.js";
 
 export const createUserValidation = [
   body("name")
+    .trim()
     .notEmpty()
     .withMessage("el name no debe ser vacio")
     .isLength({ max: 100 })
     .withMessage("el nombre no puede superar los 100 caracteres"),
 
   body("email")
+    .trim()
     .notEmpty()
     .withMessage("el email debe ser valido")
+    .isEmail()
+    .withMessage("el email de ser un correo valido")
     .isLength({ max: 100 })
     .withMessage("el email no puede superar los 100 caracteres")
     .custom(async (value) => {
@@ -24,31 +28,29 @@ export const createUserValidation = [
     }),
 
   body("password")
-    .notEmpty.withMessage("la contraseña mo debe ser vacia")
+    .trim()
+    .notEmpty()
+    .withMessage("la contraseña no debe ser vacia")
     .isLength({ max: 100 })
-    .withMessage("la contraseña mo puede superar los 100 caracteres"),
+    .withMessage("la contraseña no puede superar los 100 caracteres"),
 ];
 
 export const editarUserValidation = [
   param("id")
+    .trim()
     .isInt({ min: 1 })
-    .withMessage("el id debe de se un numero entero y positivo")
-    .custom(async (value) => {
-      const usuarioExiste = await UsersModel.findByPk(value);
-      if (!usuarioExiste) {
-        throw new Error("el usuario no existe en el sistema");
-      }
-      return true;
-    }),
+    .withMessage("el id debe de se un numero entero y positivo"),
 
   body("name")
+    .trim()
     .optional()
     .notEmpty()
     .withMessage("el nombre no puede estar vacio")
     .isLength({ max: 100 })
     .withMessage("el nombre no puede superar los 100 caracteres"),
 
-  body(email)
+  body("email")
+    .trim()
     .optional()
     .notEmpty()
     .withMessage("el email no puede estar vacio")
@@ -66,22 +68,17 @@ export const editarUserValidation = [
       return true;
     }),
   body("password")
+    .trim()
     .optional()
     .notEmpty()
     .withMessage("la contraseña no puede estar vacia")
     .isLength({ max: 100 })
-    .withMessage("la contraseña no pued esuperar ñps 100 caracteres"),
+    .withMessage("la contraseña no puede superar los 100 caracteres"),
 ];
 
 export const userIdValidation = [
   param("id")
+  .trim()
   .isInt({min: 1})
   .withMessage("el id debe ser un numero entero y positivo")
-  .custom(async(value) =>{
-    const usuarioExiste = await UsersModel.findByPk(value);
-    if (!usuarioExiste) {
-      throw new Error ("el usuario con ese id no existe")
-    }
-    return true;
-  })
 ]

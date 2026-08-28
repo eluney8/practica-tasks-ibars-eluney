@@ -7,18 +7,21 @@ export const createConfigValidation = [
     .notEmpty()
     .withMessage("el user_id es obligatorio")
     .isInt({ min: 1 })
-    .withMessage("el user_id debe ser un numero entero y positivo")
-    .custom(async (value) => {
-      const usuarioExiste = await UsersModel.findByPk(value);
-      if (!usuarioExiste) {
-        throw new Error("ese usuario no existe");
-      }
-      const configExistente = await ConfigModel.findOne({
-        where: { user_id: value },
-      });
-      if (configExistente) {
-        throw new Error("este usuario ya tiene una configuración asignada");
-      }
-      return true;
-    }),
+    .withMessage("el user_id debe ser un numero entero y positivo"),
+body("theme_color")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("el color del tema no puede estar vacio si se envia")
+    .isLength({ max: 30 })
+    .withMessage("el color del tema no puede superar los 30 caracteres"),
+
+  body("language")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("el idioma no puede estar vacio si se envia")
+    .isLength({ max: 20 })
+    .withMessage("el idioma no puede superar los 20 caracteres")
+
 ];
