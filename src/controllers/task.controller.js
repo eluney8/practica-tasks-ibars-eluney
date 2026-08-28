@@ -100,7 +100,7 @@ export const eliminarTask = async (req, res) => {
         message: "tarea no encontrada",
       });
     }
-    await task.destroy();
+    await task.destroy() ;
     return res.status(200).json({
       message: "tarea eliminada correctamente",
     });
