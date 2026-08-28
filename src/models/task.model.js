@@ -19,18 +19,18 @@ export const TaskModel = sequelize.define(
       defaultValue: false,
     },
     user_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "Users",
-        key: "id",
-      },
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: "Users",
+      key: "id",
     },
   },
-  {
-    timestamps: false,
-  },
-);
+}, {
+  timestamps: true,
+  paranoid: true, 
+});
+
 
 TaskModel.belongsTo(UsersModel, { foreignKey: "user_id", as: "autor" });
 

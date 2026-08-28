@@ -93,17 +93,16 @@ export const editarTarea = async (req, res) => {
 
 export const eliminarTask = async (req, res) => {
   try {
-    const idTask = Number(req.params.id);
-
-    const task = await TaskModel.findByPk(idTask);
+ const { id } = matchedData(req, { locations: ["params"] });
+    const task = await TaskModel.findByPk(id);
     if (!task) {
       return res.status(404).json({
-        message: "tarea no encontrado",
+        message: "tarea no encontrada",
       });
     }
     await task.destroy();
     return res.status(200).json({
-      message: "tarea eliminado",
+      message: "tarea eliminada correctamente",
     });
   } catch (error) {
     console.error(error);
