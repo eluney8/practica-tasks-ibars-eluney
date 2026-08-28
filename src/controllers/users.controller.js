@@ -31,7 +31,7 @@ export const crearUser = async (req, res) => {
     if (password.length > 100) {
       return res
         .status(400)
-        .json({ message: "la contraseña mo puede superar los 100 caracteres" });
+        .json({ message: "la contraseña no puede superar los 100 caracteres" });
     }
     const emailExistente = await UsersModel.findOne({ where: { email } });
     if (emailExistente) {

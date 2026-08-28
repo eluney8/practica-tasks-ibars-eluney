@@ -1,12 +1,6 @@
 import { body, param } from "express-validator";
 import { TagModel } from "../../models/tag.model.js";
 
-export const tagIdValidation = [
-  param("id")
-    .isInt({ min: 1 })
-    .withMessage("El id de la etiqueta debe ser un numero entero y positivo"),
-];
-
 export const createTagValidation = [
   body("name")
     .trim()
